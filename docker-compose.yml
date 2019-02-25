@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+   # TODO This service must be unique
+   example_db:
+     container_name: ${CONTAINER_DB_NAME}
+     image: mariadb:latest
+     restart: unless-stopped
+     volumes:
+        - ${DB_PATH}:/var/lib/mysql
+     environment:
+       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+       MYSQL_DATABASE: ${MYSQL_DATABASE}
+       MYSQL_USER: ${MYSQL_USER}
+       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+   # TODO This service must be unique
+   example_wordpress:
+     depends_on:
+       - ${CONTAINER_DB_NAME}
+     container_name: ${CONTAINER_WP_NAME}
+     # You can set the WP version specifically here
+     image: wordpress:latest
+     restart: unless-stopped
+     volumes:
+       - ${WP_CORE}:/var/www/html
+       - ${WP_CONTENT}:/var/www/html/wp-content
+     environment:
+       WORDPRESS_DB_HOST: ${CONTAINER_DB_NAME}:3306
+       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+       WORDPRESS_DB_USER: ${MYSQL_USER}
+       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+       WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+       VIRTUAL_HOST: ${DOMAINS}
+#   wpcli:
+#     image: tatemz/wp-cli
+#     volumes:
+#       - ${WP_CORE}:/var/www/html
+#       - ${WP_CONTENT}:/var/www/html/wp-content
+#     depends_on:
+#       - db
+#     entrypoint: wp
+
+networks:
+    default:
+       external:
+         name: ${NETWORK}
