@@ -12,3 +12,5 @@ cp .env.sample .env
 
 ## Run docker-compose
 $ docker-compose up -d
+
+Ref: https://github.com/evertramos/docker-wordpress-letsencrypt
